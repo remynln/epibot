@@ -24,9 +24,7 @@ bot.on('message', (msg) => {
     const args = msg.content.trim().split(/ +/g)
     const commandName = args.shift().toLowerCase()
     if (msg.channel.id === config.verify_chan) {
-        if (!msg.content.endsWith("@epitech.eu")) return msg.channel.send("Error, please enter valid e-mail").then(msg => {
-                setTimeout(() => msg.delete(), 5000);
-              })
+        if (!msg.content.endsWith("@epitech.eu")) return msg.channel.send("Error, please enter valid e-mail");
         const command = bot.commands.get("login");
         command.run(msg, args, bot);
         return;
