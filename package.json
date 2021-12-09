@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "axios": "^0.21.1",
+    "bars": "github:jstrace/bars",
     "discord.js": "^12.5.3",
     "fs": "*",
     "jsonwebtoken": "^8.5.1"
