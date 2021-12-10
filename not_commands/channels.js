@@ -22,7 +22,7 @@ async function manage_channels(data, bot, year, server, logs) {
             }
             logs.send(`Project ${data.projects[i].project} start today`)
 
-	    const thread = await chan.threads.create({
+        const thread = await chan.threads.create({
                 name: `${data.projects[i].project.replace(/ |\/|\./g, "")}`,
                 autoArchiveDuration: 24*60,
                 reason: 'because',
