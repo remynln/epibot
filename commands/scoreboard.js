@@ -15,18 +15,24 @@ async function send_scoreboard(results, msg) {
     
     Object.entries(results).forEach((city, total) => {
         let ascii_per = ""
-        let role = msg.guild.roles.cache.find(role => role.name === `${city}`)
-        let percentage = ((role.members.size / total) * 100).toFixed(2);
-        for (let n = 0; n < 10; n++) {
-            if (parseInt(((parseInt(percentage, 10))/10).toFixed(0).toString(), 10) > n){
-            console.log("oui")
-            ascii_per = ascii_per + "=";
+	let percentage = 0;
+        let role = msg.guild.roles.cache.find(role => role.name === `${city[0]}`)
+	if (role === undefined) {
+	    ascii_per = "error"
+            city = "error"
+	    percentage = "error"
+	} else {
+            percentage = ((role.members.size / city[1]) * 100).toFixed(2);
+            for (let n = 0; n < 10; n++) {
+                if (parseInt(((parseInt(percentage, 10))/10).toFixed(0).toString(), 10) > n){
+                    ascii_per = ascii_per + "=";
+                }
             }
-        }
-        for (let n = ascii_per.length; n < 10; n++) {
-            ascii_per = ascii_per + "-"
-        }
-        embed.addField(`${city}`, `\`[${ascii_per}]\`, ${percentage}%`, true)
+            for (let n = ascii_per.length; n < 10; n++) {
+                ascii_per = ascii_per + "-"
+            }
+	}
+        embed.addField(`${city[0]}`, `\`[${ascii_per}]\`, ${percentage}%`, true)
     })
     
     await msg.channel.send(embed)
@@ -74,8 +80,10 @@ async function scoreboard(args, msg, bot) {
             console.log(city[i], course[j], total)
             if (!flag && total) {
                 const full_city_name = data.users.filter(({ city }) => city)[0]?.city
+		console.log("Coucou " + full_city_name)
                 results[full_city_name] = (results[full_city_name] ?? 0) + total
             }
+            flag = 0;
         }
     }
     send_scoreboard(results, msg)
