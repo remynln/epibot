@@ -36,6 +36,7 @@ async function send_scoreboard(results, msg) {
     })
     
     await msg.channel.send(embed)
+    msg.channel.stopTyping()
 }
 
 async function scoreboard(args, msg, bot) {
@@ -44,6 +45,7 @@ async function scoreboard(args, msg, bot) {
     let course = ["bachelor/classic", "bachelor/tek1ed", "bachelor/tek2ed", "bachelor/tek3s", "digital"]
     let results = {}
     
+    msg.channel.startTyping()
     axios.interceptors.request.use(
         config => {
             config.headers.cookie = `conect.sid=${cookie.cookie}`
