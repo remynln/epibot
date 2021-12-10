@@ -34,7 +34,7 @@ async function send_scoreboard(results, msg) {
 
 async function scoreboard(args, msg, bot) {
     let flag = 0;
-    let city = ["FR/BDX", "FR/LIL", "FR/LYN", "FR/MAR", "FR/MLH", "FR/MLN", "FR/MPL", "FR/NAN", "FR/NCE", "FR/NCY", "FR/PAR", "FR/REN", "FR/RUN", /*"FR/STG",*/ "FR/TLS"]
+    let city = ["FR/BDX", "FR/LIL", "FR/LYN", "FR/MAR", "FR/MLH", "FR/MLN", "FR/MPL", "FR/NAN", "FR/NCE", "FR/NCY", "FR/PAR", "FR/REN", "FR/RUN", "FR/STG", "FR/TLS"]
     let course = ["bachelor/classic", "bachelor/tek1ed", "bachelor/tek2ed", "bachelor/tek3s", "digital"]
     let results = {}
     
