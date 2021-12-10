@@ -29,7 +29,10 @@ bot.on('message', (msg) => {
         command.run(msg, args, bot);
         return;
     }
-    if (!commandName.startsWith(config.prefix)) return;
+    if (!commandName.startsWith(config.prefix)) {
+        msg.react("❌")
+        return;
+    }
     const command = bot.commands.get(commandName.slice(config.prefix.length))
     if (!command) return
     command.run(msg, args, bot)
