@@ -17,7 +17,7 @@ async function give_role(data, msg, bot) {
     msg.member.roles.add(city)
     msg.member.roles.add(promo)
     msg.member.roles.add(verif)
-    msg.member.send(`Vous avez été assigné a l'utilisateur **${data.profile.name}** avec succes.\nEn cas d'erreur veuillez contacter un admin`)
+    msg.member.send(`Vous avez été assigné à l'utilisateur **${data.profile.name}** avec succès.\nEn cas d'erreur veuillez contacter un admin`)
     //msg.member.setNickname(data.profile.name)
     var embed = new Discord.MessageEmbed()
     .setColor("#4169E1")
