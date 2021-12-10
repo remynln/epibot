@@ -1,9 +1,30 @@
 {
-  "dependencies": {
-    "axios": "^0.21.1",
-    "bars": "github:jstrace/bars",
-    "discord.js": "^12.5.3",
-    "fs": "*",
-    "jsonwebtoken": "^8.5.1"
-  }
+	"name": "eipbot",
+	"type": "module",
+	"main": "build/client.js",
+	"scripts": {
+		"build": "tsc",
+		"dev": "node --loader ts-node/esm/transpile-only src/main.ts",
+		"start": "nodemon --exec node --loader ts-node/esm/transpile-only src/main.ts",
+		"serve": "node build/client.js",
+		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
+	},
+	"dependencies": {
+		"axios": "^0.21.1",
+		"bars": "github:jstrace/bars",
+		"fs": "*",
+		"jsonwebtoken": "^8.5.1",
+		"@discordx/importer": "^1.1.2",
+		"@discordx/utilities": "^3.1.5",
+		"discord.js": "^13.3.1",
+		"discordx": "^9.0.1",
+		"dotenv": "^10.0.0",
+		"reflect-metadata": "^0.1.13"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.15",
+		"prettier": "^2.5.1",
+		"ts-node": "^10.4.0",
+		"typescript": "^4.5.3"
+	}
 }
