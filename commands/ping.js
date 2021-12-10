@@ -4,7 +4,7 @@ function hello(args, msg, bot) {
     const embed = new Discord.MessageEmbed()
     .setColor('#ss')
     .setTitle('Ping')
-    .setDescription(`Api discord: ${Date.now() - msg.createdTimestamp} ms`)
+    .setDescription(`${Date.now() - msg.createdTimestamp} ms`)
     msg.channel.send(embed)
 }
 
