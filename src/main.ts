@@ -4,10 +4,12 @@ import { Intents, Interaction, Message } from 'discord.js';
 import { Client } from 'discordx';
 import { dirname, importx } from '@discordx/importer';
 
+import config from './config.json';
+
 /* eslint-disable import/first */
 const client = new Client({
 	simpleCommand: {
-		prefix: '!'
+		prefix: config.prefix
 	},
 	intents: [
 		Intents.FLAGS.GUILDS,

@@ -1,13 +1,16 @@
 import axios from 'axios';
 import { Message, MessageEmbed } from 'discord.js';
 import {
+	Client,
 	Discord,
+	On,
 	SimpleCommand,
 	SimpleCommandMessage,
 	SimpleCommandOption
 } from 'discordx';
+import type { ArgsOf } from 'discordx';
 
-import * as config from '../../config/config.json';
+import config from '../config.json';
 
 @Discord()
 class PingCommand {
@@ -116,5 +119,24 @@ class PingCommand {
 		}
 
 		command.message.channel.send(login ?? '');
+	}
+
+	@On('messageCreate')
+	private onMessage(
+		[message]: ArgsOf<'messageCreate'>, // Type message automatically
+		client: Client, // Client instance injected here,
+		guardPayload: any
+	) {
+		if (message.type != 'DEFAULT' || message.author.bot) return;
+
+		console.log(config);
+
+		if (message.channel.id === config.verify_chan) {
+			if (!message.content.endsWith('@epitech.eu')) {
+				message.channel.send('Error, please enter valid e-mail');
+				return;
+			}
+			message.content = `${config.prefix}login ${message.content}`;
+		}
 	}
 }
