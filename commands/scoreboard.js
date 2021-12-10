@@ -60,7 +60,7 @@ async function scoreboard(args, msg, bot) {
                     })
                 }
             })
-            const drop_out = await axios.get(`https://roslyn.epi.codes/trombi/api.php?version=2&state=1634121466&action=search&q=&filter[promo]=out&filter[course]=${course[j]}&filter[city]=${city[i]}&filter[group]=all`).then(res => res.data).catch(function (error) {
+            const drop_out = !data.count ? { count: 0 } : await axios.get(`https://roslyn.epi.codes/trombi/api.php?version=2&state=1634121466&action=search&q=&filter[promo]=out&filter[course]=${course[j]}&filter[city]=${city[i]}&filter[group]=all`).then(res => res.data).catch(function (error) {
                 if (error.response) {
                     console.log(error.response.data);
                     console.log(error.response.status);
