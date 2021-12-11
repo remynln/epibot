@@ -8,17 +8,18 @@ class PingCommand {
 		const time = Date.now();
 		const embed = new MessageEmbed()
 			.setTitle(`🏓 Pong`)
-			.setImage('https://giphy.com/embed/xThuWtNFKZWG6fUFe8')
+			.setImage('https://media.giphy.com/media/xThuWtNFKZWG6fUFe8/giphy.gif')
 			.setDescription(`${Date.now() - time} ms`);
 		command.message.channel.send({ embeds: [embed] });
 	}
 
 	@SimpleCommand('pong')
 	pong(command: SimpleCommandMessage): void {
-		command.message.channel.send(
-			command.message.guild?.emojis.cache
-				.get('919329964468367411')
-				?.toString() ?? ''
+		const random = Math.floor(
+			Math.random() * (command.message.guild?.emojis.cache.size ?? 0)
 		);
+		const emoji = command.message.guild?.emojis.cache.at(random);
+
+		command.message.channel.send(emoji?.toString() ?? 'bruh');
 	}
 }
