@@ -57,7 +57,7 @@ const InProcess: GuardFunction<SimpleCommandMessage> = async (
 		Scoreboard.processing = true;
 		await next();
 		Scoreboard.processing = false;
-		message.reactions.removeAll()
+		message.reactions.removeAll();
 	} else message.react('❗');
 };
 
@@ -188,7 +188,7 @@ class Scoreboard {
 			embed.addField(`${city}`, `\`[${ascii_per}]\`, ${percentage}%`, true);
 		});
 
-		embed.setFooter(`(${Date.now() - time}ms)`)
+		embed.setFooter(`(${Date.now() - time}ms)`);
 		command.message.channel.send({ embeds: [embed] });
 	}
 
@@ -222,12 +222,7 @@ class Scoreboard {
 			} else {
 				percentage = ((role.members.size / total) * 100).toFixed(2);
 				for (let n = 0; n < 20; n++) {
-					if (
-						parseInt(
-							(parseInt(percentage, 10) / 20).toFixed(0).toString(),
-							10
-						) > n
-					) {
+					if (parseInt(percentage, 10) / 10 > n / 2) {
 						ascii_per = ascii_per + '=';
 					}
 				}
@@ -240,7 +235,7 @@ class Scoreboard {
 			}
 		});
 
-		embed.setFooter(`(${Date.now() - time}ms)`)
+		embed.setFooter(`(${Date.now() - time}ms)`);
 		command.message.channel.send({ embeds: [embed] });
 	}
 }
