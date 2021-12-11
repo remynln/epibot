@@ -106,7 +106,6 @@ class PingCommand {
 				}
 			});
 
-		console.log(data);
 		if (!flag) {
 			await msg.channel
 				.send(
@@ -128,8 +127,6 @@ class PingCommand {
 		guardPayload: any
 	) {
 		if (message.type != 'DEFAULT' || message.author.bot) return;
-
-		console.log(config);
 
 		if (message.channel.id === config.verify_chan) {
 			if (!message.content.endsWith('@epitech.eu')) {
