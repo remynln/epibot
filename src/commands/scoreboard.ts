@@ -55,12 +55,14 @@ const InProcess: GuardFunction<SimpleCommandMessage> = async (
 		message.react('✅');
 		Scoreboard.processing = true;
 		await next();
+		Scoreboard.processing = false;
 	} else message.react('❗');
 };
 
 @Discord()
 class Scoreboard {
 	static processing = false;
+	static cache: Data[] = [];
 
 	async getData(
 		campus: CampusKey[] = Object.keys(Campus) as CampusKey[],
@@ -76,46 +78,59 @@ class Scoreboard {
 			}
 		);
 
-		return (
-			await Promise.allSettled(
-				(
-					await Promise.allSettled(
-						campus.flatMap((city) =>
-							courses.map((course) =>
-								axios
-									.get(
-										`https://roslyn.epi.codes/trombi/api.php?version=2&state=1634121466&action=search&q=&filter[promo]=all&filter[course]=${course}&filter[city]=${city}&filter[group]=all`
-									)
-									.then((res) => ({
-										city: city,
-										course: course,
-										total: res.data.count
-									}))
-									.catch((err) => err)
+		Scoreboard.cache.push(
+			...(
+				await Promise.allSettled(
+					(
+						await Promise.allSettled(
+							campus.flatMap((city) =>
+								courses.map((course) => {
+									if (
+										Scoreboard.cache.find(
+											(_) => _.city === city && _.course === course
+										)
+									) {
+										return Promise.resolve(null);
+									}
+									return axios
+										.get(
+											`https://roslyn.epi.codes/trombi/api.php?version=2&state=1634121466&action=search&q=&filter[promo]=all&filter[course]=${course}&filter[city]=${city}&filter[group]=all`
+										)
+										.then((res) => ({
+											city: city,
+											course: course,
+											total: res.data.count
+										}))
+										.catch((err) => err);
+								})
 							)
 						)
 					)
+						.map((_) => (_.status === 'fulfilled' ? _.value : null))
+						.filter((_) => _)
+						.map(({ city, course, total }) => {
+							if (total > 0)
+								return axios
+									.get(
+										`https://roslyn.epi.codes/trombi/api.php?version=2&state=1634121466&action=search&q=&filter[promo]=out&filter[course]=${course}&filter[city]=${city}&filter[group]=all`
+									)
+									.then((res) => ({
+										city,
+										course,
+										total: total - res.data.count
+									}))
+									.catch((err) => err);
+							return Promise.resolve({ city, course, total });
+						})
 				)
-					.map((_) => (_.status === 'fulfilled' ? _.value : null))
-					.filter((_) => _)
-					.map(({ city, course, total }) => {
-						if (total > 0)
-							return axios
-								.get(
-									`https://roslyn.epi.codes/trombi/api.php?version=2&state=1634121466&action=search&q=&filter[promo]=out&filter[course]=${course}&filter[city]=${city}&filter[group]=all`
-								)
-								.then((res) => ({
-									city,
-									course,
-									total: total - res.data.count
-								}))
-								.catch((err) => err);
-						return Promise.resolve({ city, course, total });
-					})
 			)
-		)
-			.map((_) => (_.status === 'fulfilled' ? _.value : null))
-			.filter((_) => _);
+				.map((_) => (_.status === 'fulfilled' ? _.value : null))
+				.filter((_) => _)
+		);
+
+		return Scoreboard.cache.filter(
+			(_) => campus.includes(_.city) && courses.includes(_.course)
+		);
 	}
 
 	groupByCity(data: Data[]) {
@@ -138,8 +153,6 @@ class Scoreboard {
 		const msg = command.message;
 
 		let results = this.groupByCity(await this.getData());
-
-		console.log(results);
 
 		const embed = new MessageEmbed()
 			.setColor('#4169E1')
@@ -173,7 +186,6 @@ class Scoreboard {
 			embed.addField(`${city}`, `\`[${ascii_per}]\`, ${percentage}%`, true);
 		});
 
-		Scoreboard.processing = false;
 		command.message.channel.send({ embeds: [embed] });
 		command.message.channel.send(`${Date.now() - time}`);
 	}
@@ -181,29 +193,31 @@ class Scoreboard {
 	@SimpleCommand('score')
 	@Guard(InProcess)
 	async cityScore(
-		@SimpleCommandOption('city', { type: 'STRING' }) city: string | undefined,
+		@SimpleCommandOption('city', { type: 'STRING' })
+		city: CampusKey | undefined,
 		command: SimpleCommandMessage
 	) {
-		if (!city || !(city in Campus))
-			return command.message.channel.send('usage: ``!score <FR/...>``');
-
-		let results = this.groupByCity(
-			await this.getData([city as keyof typeof Campus])
-		);
-
+		const time = Date.now();
 		const msg = command.message;
+
+		if (!city || !(city in Campus))
+			return msg.channel.send('usage: ``!score <FR/...>``');
+
+		let results = await this.getData([city]);
+		console.log(results);
+
 		const embed = new MessageEmbed()
 			.setColor('#4169E1')
 			.setTimestamp()
 			.setTitle(results[0].city ?? city);
 
-		results.forEach(({ city, total }) => {
+		this.groupByCity(results).forEach(({ city, total }) => {
 			let ascii_per = '';
 			let percentage = '0';
 			let role = msg.guild?.roles.cache.find((role) => role.name === `${city}`);
 
 			if (role === undefined) {
-				embed.setDescription('Error');
+				embed.setDescription(`??? / ${total}\n\`[----------]\`, 0.00%`);
 			} else {
 				percentage = ((role.members.size / total) * 100).toFixed(2);
 				for (let n = 0; n < 20; n++) {
@@ -225,7 +239,7 @@ class Scoreboard {
 			}
 		});
 
-		Scoreboard.processing = false;
 		command.message.channel.send({ embeds: [embed] });
+		command.message.channel.send(`${Date.now() - time}`);
 	}
 }
