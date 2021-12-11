@@ -4,7 +4,7 @@ import { Intents, Interaction, Message } from 'discord.js';
 import { Client } from 'discordx';
 import { dirname, importx } from '@discordx/importer';
 
-import config from './config.json';
+import config from './config.mjs';
 
 /* eslint-disable import/first */
 const client = new Client({

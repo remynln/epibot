@@ -16,5 +16,6 @@
 		"skipLibCheck": false,
 		"forceConsistentCasingInFileNames": true,
 		"resolveJsonModule": true
-	}
+	},
+	"include": ["src/**/*.d.ts", "src/**/*.mjs", "src/**/*.ts"]
 }

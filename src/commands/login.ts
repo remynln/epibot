@@ -10,7 +10,7 @@ import {
 } from 'discordx';
 import type { ArgsOf } from 'discordx';
 
-import config from '../config.json';
+import config from '../config.mjs';
 
 @Discord()
 class PingCommand {
