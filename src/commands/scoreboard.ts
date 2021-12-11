@@ -52,10 +52,12 @@ const InProcess: GuardFunction<SimpleCommandMessage> = async (
 	next
 ) => {
 	if (!Scoreboard.processing) {
-		message.react('✅');
+		message.react('👍');
+		message.channel.sendTyping();
 		Scoreboard.processing = true;
 		await next();
 		Scoreboard.processing = false;
+		message.reactions.removeAll()
 	} else message.react('❗');
 };
 
@@ -186,8 +188,8 @@ class Scoreboard {
 			embed.addField(`${city}`, `\`[${ascii_per}]\`, ${percentage}%`, true);
 		});
 
+		embed.setFooter(`(${Date.now() - time}ms)`)
 		command.message.channel.send({ embeds: [embed] });
-		command.message.channel.send(`${Date.now() - time}`);
 	}
 
 	@SimpleCommand('score')
@@ -204,14 +206,13 @@ class Scoreboard {
 			return msg.channel.send('usage: ``!score <FR/...>``');
 
 		let results = await this.getData([city]);
-		console.log(results);
 
 		const embed = new MessageEmbed()
 			.setColor('#4169E1')
 			.setTimestamp()
-			.setTitle(results[0].city ?? city);
+			.setTitle(Campus[city]);
 
-		this.groupByCity(results).forEach(({ city, total }) => {
+		this.groupByCity(results).forEach(async ({ city, total }) => {
 			let ascii_per = '';
 			let percentage = '0';
 			let role = msg.guild?.roles.cache.find((role) => role.name === `${city}`);
@@ -239,7 +240,7 @@ class Scoreboard {
 			}
 		});
 
+		embed.setFooter(`(${Date.now() - time}ms)`)
 		command.message.channel.send({ embeds: [embed] });
-		command.message.channel.send(`${Date.now() - time}`);
 	}
 }
