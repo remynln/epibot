@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Message, MessageEmbed } from 'discord.js';
+import { GuildChannel, Message, MessageEmbed, TextChannel } from 'discord.js';
 import {
 	Client,
 	Discord,
@@ -14,7 +14,7 @@ import config from '../config.mjs';
 
 @Discord()
 class PingCommand {
-	give_role(data: any, msg: Message) {
+	async give_role(data: any, msg: Message) {
 		var city = msg.member?.guild.roles.cache.find(
 			(role) => role.name === data.profile.city.name
 		);
@@ -60,10 +60,8 @@ class PingCommand {
 				`${data.profile.promo.id} | ${data.profile.city.name}`,
 				true
 			);
-		const channel = msg.member?.guild.channels.cache.find(
-			(channel) => channel.id === config.log_chan
-		);
-		msg.channel.send({ embeds: [embed] });
+		const channel = await msg.member?.guild.channels.fetch(config.log_chan);
+		if (channel?.type == 'GUILD_TEXT') channel.send({ embeds: [embed] });
 	}
 
 	@SimpleCommand('login')
@@ -116,8 +114,6 @@ class PingCommand {
 				});
 			await this.give_role(data, msg);
 		}
-
-		command.message.channel.send(login ?? '');
 	}
 
 	@On('messageCreate')
