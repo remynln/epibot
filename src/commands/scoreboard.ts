@@ -203,7 +203,7 @@ class Scoreboard {
 		const msg = command.message;
 
 		if (!city || !(city in Campus))
-			return msg.channel.send('usage: ``!score <FR/...>``');
+			return command.sendUsageSyntax();
 
 		let results = await this.getData([city]);
 
