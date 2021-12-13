@@ -53,7 +53,7 @@ const InProcess: GuardFunction<SimpleCommandMessage> = async (
 ) => {
 	if (!Scoreboard.processing) {
 		message.react('👍');
-		message.channel.sendTyping();
+		await message.channel.sendTyping();
 		Scoreboard.processing = true;
 		await next();
 		Scoreboard.processing = false;

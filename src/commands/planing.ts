@@ -53,6 +53,8 @@ class PlaningCommand {
 		end: string | moment.Moment | undefined,
 		command: SimpleCommandMessage
 	) {
+		await command.message.channel.sendTyping();
+
 		if (!city || !(city in Campus))
 			return command.sendUsageSyntax()
 

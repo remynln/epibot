@@ -4,7 +4,9 @@ import { Discord, SimpleCommand, SimpleCommandMessage } from 'discordx';
 @Discord()
 class PingCommand {
 	@SimpleCommand('ping')
-	ping(command: SimpleCommandMessage): void {
+	async ping(command: SimpleCommandMessage) {
+		await command.message.channel.sendTyping();
+
 		const time = Date.now();
 		const embed = new MessageEmbed()
 			.setTitle(`🏓 Pong`)
@@ -14,7 +16,9 @@ class PingCommand {
 	}
 
 	@SimpleCommand('pong')
-	pong(command: SimpleCommandMessage): void {
+	async pong(command: SimpleCommandMessage) {
+		await command.message.channel.sendTyping();
+
 		const random = Math.floor(
 			Math.random() * (command.message.guild?.emojis.cache.size ?? 0)
 		);
