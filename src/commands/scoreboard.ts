@@ -192,7 +192,9 @@ class Scoreboard {
 		command.message.channel.send({ embeds: [embed] });
 	}
 
-	@SimpleCommand('score')
+	@SimpleCommand('score', {
+		description: 'Display detail for city score'
+	})
 	@Guard(InProcess)
 	async cityScore(
 		@SimpleCommandOption('city', { type: 'STRING' })
@@ -202,8 +204,7 @@ class Scoreboard {
 		const time = Date.now();
 		const msg = command.message;
 
-		if (!city || !(city in Campus))
-			return command.sendUsageSyntax();
+		if (!city || !(city in Campus)) return command.sendUsageSyntax();
 
 		let results = await this.getData([city]);
 
