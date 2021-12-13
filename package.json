@@ -17,6 +17,7 @@
 		"fs": "*",
 		"jsonwebtoken": "^8.5.1",
 		"lodash.groupby": "^4.6.0",
+		"moment": "^2.29.1",
 		"reflect-metadata": "^0.1.13"
 	},
 	"devDependencies": {
