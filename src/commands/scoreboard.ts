@@ -120,7 +120,9 @@ class Scores {
 			.filter(({ city }) => city);
 	}
 
-	@SimpleCommand('scoreboard')
+	@SimpleCommand('leaderboard', {
+		aliases: ['scoreboard']
+	})
 	@Guard(InProcess)
 	async board(command: SimpleCommandMessage) {
 		const time = Date.now();
