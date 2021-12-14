@@ -23,12 +23,12 @@ const InProcess: GuardFunction<SimpleCommandMessage> = async (
 	client,
 	next
 ) => {
-	if (!Scoreboard.processing) {
+	if (!Scores.processing) {
 		message.react('👍');
 		await message.channel.sendTyping();
-		Scoreboard.processing = true;
+		Scores.processing = true;
 		await next();
-		Scoreboard.processing = false;
+		Scores.processing = false;
 		message.reactions.removeAll();
 	} else message.react('❗');
 };
@@ -52,7 +52,7 @@ class Scores {
 			}
 		);
 
-		Scoreboard.cache.push(
+		Scores.cache.push(
 			...(
 				await Promise.allSettled(
 					(
@@ -60,7 +60,7 @@ class Scores {
 							campus.flatMap((city) =>
 								courses.map((course) => {
 									if (
-										Scoreboard.cache.find(
+										Scores.cache.find(
 											(_) => _.city === city && _.course === course
 										)
 									) {
@@ -102,7 +102,7 @@ class Scores {
 				.filter((_) => _)
 		);
 
-		return Scoreboard.cache.filter(
+		return Scores.cache.filter(
 			(_) => campus.includes(_.city) && courses.includes(_.course)
 		);
 	}
@@ -179,9 +179,9 @@ class Scores {
 		if (!city)
 			city =
 				_Campus[
-					command.message.member?.roles.cache.find(
-						(role) => !!_Campus[role.name]
-					)?.name ?? ''
+				command.message.member?.roles.cache.find(
+					(role) => !!_Campus[role.name]
+				)?.name ?? ''
 				];
 		if (!city || !(city in Campus)) return command.sendUsageSyntax();
 
