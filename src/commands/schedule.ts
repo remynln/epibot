@@ -6,9 +6,9 @@ import {
 	SimpleCommandMessage,
 	SimpleCommandOption
 } from 'discordx';
-import { Activity, Campus, CampusKey, _Campus } from '../type.js';
 import groupBy from 'lodash.groupby';
 import moment from 'moment';
+import { Activity, Campus, CampusKey } from '../type.js';
 
 const allowedFormat = ['D', 'D-M', 'D/M', 'D-M-YYYY', 'D/M/YYYY'];
 
@@ -29,13 +29,24 @@ class Schedule {
 	) {
 		const time = Date.now();
 		await command.message.channel.sendTyping();
+
 		if (!city)
-			city =
-				_Campus[
-					command.message.member?.roles.cache.find(
-						(role) => !!_Campus[role.name]
-					)?.name ?? ''
-				];
+			// @ts-expect-error
+			city = command.message.member?.roles.cache.find(
+				(role) =>
+					!!(Object.entries(Campus) as [CampusKey, Campus][]).find(
+						([, v]) => v == role.name
+					)
+			)?.name;
+
+		if (typeof city === 'string') {
+			console.log(city);
+			city = ((Object.entries(Campus) as [CampusKey, Campus][]).find(
+				// @ts-expect-error
+				([k, v]) => v === city || k.split('/')[1] === city.toUpperCase()
+			) ?? [])[0] as CampusKey;
+		}
+
 		if (!city || !(city in Campus)) return command.sendUsageSyntax();
 
 		if (!start) start = moment();
@@ -72,6 +83,7 @@ class Schedule {
 			var embed = new MessageEmbed()
 				.setColor('#4169E1')
 				.setTimestamp()
+				// @ts-expect-error
 				.setTitle(`Planing ${Campus[city]}`)
 				.setDescription(date);
 

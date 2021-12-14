@@ -9,14 +9,7 @@ import {
 	SimpleCommandOption
 } from 'discordx';
 import groupBy from 'lodash.groupby';
-import {
-	Campus,
-	CampusKey,
-	Courses,
-	CoursesKey,
-	Data,
-	_Campus
-} from '../type.js';
+import { Campus, CampusKey, Courses, CoursesKey, Data } from '../type.js';
 
 const InProcess: GuardFunction<SimpleCommandMessage> = async (
 	{ message },
@@ -179,12 +172,22 @@ class Scores {
 		const msg = command.message;
 
 		if (!city)
-			city =
-				_Campus[
-				command.message.member?.roles.cache.find(
-					(role) => !!_Campus[role.name]
-				)?.name ?? ''
-				];
+			// @ts-expect-error
+			city = command.message.member?.roles.cache.find(
+				(role) =>
+					!!(Object.entries(Campus) as [CampusKey, Campus][]).find(
+						([, v]) => v == role.name
+					)
+			)?.name;
+
+		if (typeof city === 'string') {
+			console.log(city);
+			city = ((Object.entries(Campus) as [CampusKey, Campus][]).find(
+				// @ts-expect-error
+				([k, v]) => v === city || k.split('/')[1] === city.toUpperCase()
+			) ?? [])[0] as CampusKey;
+		}
+
 		if (!city || !(city in Campus)) return command.sendUsageSyntax();
 
 		let results = await this.getData([city]);

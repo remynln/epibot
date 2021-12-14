@@ -1,5 +1,3 @@
-import { cp } from 'fs/promises';
-
 export declare type Activity = {
 	titlemodule: string;
 	acti_title: string;
@@ -46,9 +44,4 @@ export enum Courses {
 }
 
 export declare type CampusKey = keyof typeof Campus;
-export declare type _CampusKey = keyof typeof _Campus;
-export const _Campus: { [x: string]: CampusKey } = Object.fromEntries(
-	(Object.entries(Campus) as [CampusKey, Campus][]).map(([k, v]) => [v, k])
-);
-
 export declare type CoursesKey = keyof typeof Courses;
