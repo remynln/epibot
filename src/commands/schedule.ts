@@ -1,52 +1,22 @@
-import axios, { AxiosResponse } from 'axios';
-import { GuildChannel, Message, MessageEmbed, TextChannel } from 'discord.js';
+import axios from 'axios';
+import { MessageEmbed } from 'discord.js';
 import {
-	Client,
 	Discord,
-	On,
 	SimpleCommand,
 	SimpleCommandMessage,
 	SimpleCommandOption
 } from 'discordx';
-import moment from 'moment';
+import { Activity, Campus, CampusKey, _Campus } from '../type.js';
 import groupBy from 'lodash.groupby';
+import moment from 'moment';
 
-declare type Activity = {
-	titlemodule: string;
-	acti_title: string;
-	start: string;
-	end: string;
-	semester: number;
-	room: {
-		code: string;
-	};
-};
-
-declare type CampusKey = keyof typeof Campus;
-const enum Campus {
-	'FR/BDX' = 'Bordeaux',
-	'FR/LIL' = 'Lille',
-	'FR/LYN' = 'Lyon',
-	'FR/MAR' = 'Marseille',
-	'FR/MLH' = 'Mulhouse',
-	// 'FR/MLN' = "Moulin",
-	'FR/MPL' = 'Montpellier',
-	'FR/NAN' = 'Nantes',
-	'FR/NCE' = 'Nice',
-	'FR/NCY' = 'Nancy',
-	'FR/PAR' = 'Paris',
-	'FR/REN' = 'Rennes',
-	'FR/RUN' = 'La Réunion',
-	'FR/STG' = 'Strasbourg',
-	'FR/TLS' = 'Toulouse',
-	'BJ/COT' = 'Cotonou'
-}
+const allowedFormat = ['D', 'D-M', 'D/M', 'D-M-YYYY', 'D/M/YYYY'];
 
 @Discord()
 class PlaningCommand {
-	@SimpleCommand('planing', {
-		description:
-			'Display planing of the city.\nBy defaut it the planing of today.\nIf start is specified end is set to the same day to only display one day.'
+	@SimpleCommand('schedule', {
+		aliases: ['planing', 'planning'],
+		description: 'Display your schedule for the day.'
 	})
 	async planing(
 		@SimpleCommandOption('city', { type: 'STRING' })
@@ -59,15 +29,20 @@ class PlaningCommand {
 	) {
 		const time = Date.now();
 		await command.message.channel.sendTyping();
-
+		if (!city)
+			city =
+				_Campus[
+					command.message.member?.roles.cache.find(
+						(role) => !!_Campus[role.name]
+					)?.name ?? ''
+				];
 		if (!city || !(city in Campus)) return command.sendUsageSyntax();
 
-		if (!start) start = moment().startOf('day');
-		if (typeof start == 'string')
-			start = moment(start, 'DD-MM-YYYY').startOf('day');
+		if (!start) start = moment();
+		if (typeof start == 'string') start = moment(start, allowedFormat);
 
-		if (!end) end = moment(start);
-		if (typeof end == 'string') end = moment(end, 'DD-MM-YYYY').startOf('day');
+		if (!end) end = moment();
+		if (typeof end == 'string') end = moment(end, allowedFormat);
 
 		axios.interceptors.request.use(
 			(config) => {
@@ -83,8 +58,8 @@ class PlaningCommand {
 			(await axios
 				.get(
 					`https://intra.epitech.eu/planning/load?format=json&location=${city}&start=${start.format(
-						'YYYY-MM-DD'
-					)}&end=${end.format('YYYY-MM-DD')}`
+						'YYYY-M-D'
+					)}&end=${end.format('YYYY-M-D')}`
 				)
 				.then((res) => res.data)) as Activity[]
 		)
@@ -92,13 +67,13 @@ class PlaningCommand {
 			.sort((a, b) => moment(a.start).diff(b.start));
 
 		var embeds = Object.entries(
-			groupBy(data, (d) => moment(d.start).startOf('day'))
+			groupBy(data, (_) => moment(_.start).format('MMMM Do YYYY'))
 		).map(([date, data]) => {
 			var embed = new MessageEmbed()
 				.setColor('#4169E1')
 				.setTimestamp()
 				.setTitle(`Planing ${Campus[city]}`)
-				.setDescription(moment(date).format('MMMM Do, YYYY'));
+				.setDescription(date);
 
 			data.forEach((data) => {
 				embed.addField(

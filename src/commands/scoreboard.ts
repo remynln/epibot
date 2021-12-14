@@ -9,42 +9,7 @@ import {
 	SimpleCommandOption
 } from 'discordx';
 import groupBy from 'lodash.groupby';
-
-enum Campus {
-	'FR/BDX' = 'Bordeaux',
-	'FR/LIL' = 'Lille',
-	'FR/LYN' = 'Lyon',
-	'FR/MAR' = 'Marseille',
-	'FR/MLH' = 'Mulhouse',
-	// 'FR/MLN' = "Moulin",
-	'FR/MPL' = 'Montpellier',
-	'FR/NAN' = 'Nantes',
-	'FR/NCE' = 'Nice',
-	'FR/NCY' = 'Nancy',
-	'FR/PAR' = 'Paris',
-	'FR/REN' = 'Rennes',
-	'FR/RUN' = 'La Réunion',
-	'FR/STG' = 'Strasbourg',
-	'FR/TLS' = 'Toulouse',
-	'BJ/COT' = 'Cotonou'
-}
-
-enum Courses {
-	'bachelor/classic' = 'bachelor',
-	'bachelor/tek1ed' = 'bachelor',
-	'bachelor/tek2ed' = 'bachelor',
-	'bachelor/tek3s' = 'bachelor',
-	'digital' = 'digital',
-	'premsc' = 'premsc'
-}
-
-declare type CampusKey = keyof typeof Campus;
-declare type CoursesKey = keyof typeof Courses;
-declare type Data = {
-	city: CampusKey;
-	course: CoursesKey;
-	total: number;
-};
+import { Campus, CampusKey, Courses, CoursesKey, Data } from '../type.js';
 
 const InProcess: GuardFunction<SimpleCommandMessage> = async (
 	{ message },

@@ -4,6 +4,7 @@
 	"main": "build/client.js",
 	"scripts": {
 		"dev": "node --loader ts-node/esm/transpile-only src/main.ts",
+		"start": "node --loader ts-node/esm/transpile-only src/main.ts",
 		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ./src"
 	},
 	"dependencies": {
@@ -21,9 +22,11 @@
 		"reflect-metadata": "^0.1.13"
 	},
 	"devDependencies": {
+		"@types/lodash.groupby": "^4.6.6",
 		"nodemon": "^2.0.15",
 		"prettier": "^2.5.1",
 		"ts-node": "^10.4.0",
+		"ts-node-dev": "^1.1.8",
 		"typescript": "^4.5.3"
 	}
 }

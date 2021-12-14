@@ -1,9 +1,11 @@
 {
 	"compilerOptions": {
 		"target": "ESNext",
+		"lib": ["ESNext"],
 		"module": "ESNext",
 		"outDir": "./build",
 		"rootDir": "./src",
+		"baseUrl": "./src",
 		"strict": true,
 		"esModuleInterop": true,
 		"moduleResolution": "Node",
