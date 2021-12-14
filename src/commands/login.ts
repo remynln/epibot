@@ -13,7 +13,7 @@ import type { ArgsOf } from 'discordx';
 import config from '../config.mjs';
 
 @Discord()
-class PingCommand {
+class Login {
 	async give_role(data: any, msg: Message) {
 		var city = msg.member?.guild.roles.cache.find(
 			(role) => role.name === data.profile.city.name

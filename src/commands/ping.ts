@@ -2,7 +2,7 @@ import { MessageEmbed } from 'discord.js';
 import { Discord, SimpleCommand, SimpleCommandMessage } from 'discordx';
 
 @Discord()
-class PingCommand {
+class Miscs {
 	@SimpleCommand('ping')
 	async ping(command: SimpleCommandMessage) {
 		await command.message.channel.sendTyping();

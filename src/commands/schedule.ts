@@ -13,12 +13,12 @@ import moment from 'moment';
 const allowedFormat = ['D', 'D-M', 'D/M', 'D-M-YYYY', 'D/M/YYYY'];
 
 @Discord()
-class PlaningCommand {
+class Schedule {
 	@SimpleCommand('schedule', {
 		aliases: ['planing', 'planning'],
 		description: 'Display your schedule for the day.'
 	})
-	async planing(
+	async schedule(
 		@SimpleCommandOption('city', { type: 'STRING' })
 		city: CampusKey | undefined,
 		@SimpleCommandOption('start', { type: 'STRING' })

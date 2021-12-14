@@ -34,7 +34,7 @@ const InProcess: GuardFunction<SimpleCommandMessage> = async (
 };
 
 @Discord()
-class Scoreboard {
+class Scores {
 	static processing = false;
 	static cache: Data[] = [];
 
