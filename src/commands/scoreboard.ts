@@ -43,12 +43,11 @@ class Scores {
 			(error) => Promise.reject(error)
 		);
 
-		const time = Date.now();
 		Scores.cache.push(
 			...(
-				await Promise.allSettled(
+				await Promise.allSettled<Promise<Data>[]>(
 					(
-						await Promise.allSettled(
+						await Promise.allSettled<Promise<Data>[]>(
 							campus.flatMap((city) =>
 								courses.map((course) => {
 									if (
@@ -66,26 +65,25 @@ class Scores {
 											city: city,
 											course: course,
 											total: res.data.count
-										}))
-										.catch((err) => Promise.reject(err));
+										}));
 								})
 							)
 						)
 					).map((_) => {
 						if (_.status !== 'fulfilled') return Promise.reject();
 						let { city, course, total } = _.value;
-						if (total > 0)
-							return axios
-								.get(
-									`https://roslyn.epi.codes/trombi/api.php?version=2&state=1634121466&action=search&q=&filter[promo]=out&filter[course]=${course}&filter[city]=${city}&filter[group]=all`
-								)
-								.then((res) => ({
-									city,
-									course,
-									total: total - res.data.count
-								}))
-								.catch((err) => Promise.reject(err));
-						return Promise.resolve({ city, course, total });
+						if (total < 1) return Promise.resolve({ city, course, total });
+
+						return axios
+							.get(
+								`https://roslyn.epi.codes/trombi/api.php?version=2&state=1634121466&action=search&q=&filter[promo]=out&filter[course]=${course}&filter[city]=${city}&filter[group]=all`
+							)
+							.then((res) => ({
+								city: city,
+								course: course,
+								total: total - res.data.count
+							}))
+							.catch((err) => ({ city, course, total }));
 					})
 				)
 			)
@@ -205,7 +203,8 @@ class Scores {
 					if (percentage / 10 > n / 2) ascii_per = ascii_per + '=';
 				for (let n = ascii_per.length; n < 20; n++) ascii_per = ascii_per + '-';
 				embed.setDescription(
-					`${role.members.size} / ${total}\n\`[${ascii_per}]\`, ${percentage}%`
+					`${role.members.size
+					} / ${total}\n\`[${ascii_per}]\`, ${percentage.toFixed(2)}%`
 				);
 			}
 		});
