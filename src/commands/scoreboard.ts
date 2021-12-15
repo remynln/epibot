@@ -40,11 +40,10 @@ class Scores {
 				config.headers.cookie = `conect.sid=${process.env.ROSLYN_COOKIE ?? ''}`;
 				return config;
 			},
-			(error) => {
-				return Promise.reject(error);
-			}
+			(error) => Promise.reject(error)
 		);
 
+		const time = Date.now();
 		Scores.cache.push(
 			...(
 				await Promise.allSettled(
@@ -56,9 +55,9 @@ class Scores {
 										Scores.cache.find(
 											(_) => _.city === city && _.course === course
 										)
-									) {
-										return Promise.resolve(null);
-									}
+									)
+										return Promise.reject();
+
 									return axios
 										.get(
 											`https://roslyn.epi.codes/trombi/api.php?version=2&state=1634121466&action=search&q=&filter[promo]=all&filter[course]=${course}&filter[city]=${city}&filter[group]=all`
@@ -68,31 +67,31 @@ class Scores {
 											course: course,
 											total: res.data.count
 										}))
-										.catch((err) => err);
+										.catch((err) => Promise.reject(err));
 								})
 							)
 						)
-					)
-						.map((_) => (_.status === 'fulfilled' ? _.value : null))
-						.filter((_) => _)
-						.map(({ city, course, total }) => {
-							if (total > 0)
-								return axios
-									.get(
-										`https://roslyn.epi.codes/trombi/api.php?version=2&state=1634121466&action=search&q=&filter[promo]=out&filter[course]=${course}&filter[city]=${city}&filter[group]=all`
-									)
-									.then((res) => ({
-										city,
-										course,
-										total: total - res.data.count
-									}))
-									.catch((err) => err);
-							return Promise.resolve({ city, course, total });
-						})
+					).map((_) => {
+						if (_.status !== 'fulfilled') return Promise.reject();
+						let { city, course, total } = _.value;
+						if (total > 0)
+							return axios
+								.get(
+									`https://roslyn.epi.codes/trombi/api.php?version=2&state=1634121466&action=search&q=&filter[promo]=out&filter[course]=${course}&filter[city]=${city}&filter[group]=all`
+								)
+								.then((res) => ({
+									city,
+									course,
+									total: total - res.data.count
+								}))
+								.catch((err) => Promise.reject(err));
+						return Promise.resolve({ city, course, total });
+					})
 				)
 			)
-				.map((_) => (_.status === 'fulfilled' ? _.value : null))
-				.filter((_) => _)
+				.filter((_) => _ && _.status === 'fulfilled')
+				// @ts-expect-error
+				.map(({ value }) => value)
 		);
 
 		return Scores.cache.filter(
@@ -106,7 +105,9 @@ class Scores {
 				[key: string]: Data[];
 			}
 		)
-			.map((group) => group.reduce((p, n) => ({ ...p, total: p.total + n.total })))
+			.map((group) =>
+				group.reduce((p, n) => ({ ...p, total: p.total + n.total }))
+			)
 			.map(({ city, total }) => ({ city: Campus[city], total }))
 			.filter(({ city }) => city);
 	}
@@ -126,32 +127,30 @@ class Scores {
 			.setTimestamp()
 			.setTitle('Scoreboard');
 
-		results.forEach(({ city, total }) => {
-			let ascii_per = '';
-			let percentage = '0';
-			let role = msg.guild?.roles.cache.find((role) => role.name === `${city}`);
-
-			if (role === undefined) {
-				ascii_per = 'error';
-				percentage = 'error';
-			} else {
-				percentage = ((role.members.size / total) * 100).toFixed(2);
-				for (let n = 0; n < 10; n++) {
-					if (
-						parseInt(
-							(parseInt(percentage, 10) / 10).toFixed(0).toString(),
-							10
-						) > n
-					) {
-						ascii_per = ascii_per + '=';
-					}
-				}
-				for (let n = ascii_per.length; n < 10; n++) {
-					ascii_per = ascii_per + '-';
-				}
-			}
-			embed.addField(`${city}`, `\`[${ascii_per}]\`, ${percentage}%`, true);
-		});
+		results
+			.map(({ city, total }) => {
+				let role = msg.guild?.roles.cache.find(
+					(role) => role.name === `${city}`
+				);
+				if (role === undefined) return { city, percentage: 0 };
+				return {
+					city,
+					percentage: (role.members.size / total) * 100
+				};
+			})
+			.filter(({ percentage }) => percentage)
+			.sort((a, b) => b.percentage - a.percentage)
+			.forEach(({ city, percentage }) => {
+				let ascii_per = '';
+				for (let n = 0; n < 10; n++)
+					if (percentage / 10 > n) ascii_per = ascii_per + '=';
+				for (let n = ascii_per.length; n < 10; n++) ascii_per = ascii_per + '-';
+				embed.addField(
+					`${city}`,
+					`\`[${ascii_per}]\`, ${percentage.toFixed(2)}%`,
+					true
+				);
+			});
 
 		embed.setFooter(`(${Date.now() - time}ms)`);
 		command.message.channel.send({ embeds: [embed] });
@@ -195,21 +194,16 @@ class Scores {
 
 		this.groupByCity(results).forEach(async ({ city, total }) => {
 			let ascii_per = '';
-			let percentage = '0';
+			let percentage = 0;
 			let role = msg.guild?.roles.cache.find((role) => role.name === `${city}`);
 
 			if (role === undefined) {
 				embed.setDescription(`??? / ${total}\n\`[----------]\`, 0.00%`);
 			} else {
-				percentage = ((role.members.size / total) * 100).toFixed(2);
-				for (let n = 0; n < 20; n++) {
-					if (parseInt(percentage, 10) / 10 > n / 2) {
-						ascii_per = ascii_per + '=';
-					}
-				}
-				for (let n = ascii_per.length; n < 20; n++) {
-					ascii_per = ascii_per + '-';
-				}
+				percentage = (role.members.size / total) * 100;
+				for (let n = 0; n < 20; n++)
+					if (percentage / 10 > n / 2) ascii_per = ascii_per + '=';
+				for (let n = ascii_per.length; n < 20; n++) ascii_per = ascii_per + '-';
 				embed.setDescription(
 					`${role.members.size} / ${total}\n\`[${ascii_per}]\`, ${percentage}%`
 				);
