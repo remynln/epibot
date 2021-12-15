@@ -39,13 +39,11 @@ class Schedule {
 					)
 			)?.name;
 
-		if (typeof city === 'string') {
-			console.log(city);
+		if (typeof city === 'string')
 			city = ((Object.entries(Campus) as [CampusKey, Campus][]).find(
 				// @ts-expect-error
 				([k, v]) => v === city || k.split('/')[1] === city.toUpperCase()
 			) ?? [])[0] as CampusKey;
-		}
 
 		if (!city || !(city in Campus)) return command.sendUsageSyntax();
 
