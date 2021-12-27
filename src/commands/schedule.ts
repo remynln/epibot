@@ -9,6 +9,7 @@ import {
 import groupBy from 'lodash.groupby';
 import moment from 'moment';
 import { Activity, Campus, CampusKey } from '../type.js';
+import { LogError } from './error.js';
 
 const allowedFormat = ['D', 'D-M', 'D/M', 'D-M-YYYY', 'D/M/YYYY'];
 
@@ -55,7 +56,7 @@ class Schedule {
 
 		axios.interceptors.request.use(
 			(config) => {
-				config.headers.cookie = `conect.sid=${process.env.ROSLYN_COOKIE ?? ''}`;
+				config.headers.cookie = process.env.ROSLYN_COOKIE;
 				return config;
 			},
 			(error) => {
@@ -70,6 +71,7 @@ class Schedule {
 						'YYYY-M-D'
 					)}&end=${end.format('YYYY-M-D')}`
 				)
+				.catch((err) => LogError(command.message, err))
 				.then((res) => res.data)) as Activity[]
 		)
 			.filter(({ semester }) => semester < 7)
@@ -90,8 +92,7 @@ class Schedule {
 					`[${moment(data.start).format('HH:mm')} - ${moment(data.end).format(
 						'HH:mm'
 					)}]`,
-					`${data.titlemodule} » ${data.acti_title} — ${
-						data.room?.code?.split('/').pop() ?? 'no room asigned'
+					`${data.titlemodule} » ${data.acti_title} — ${data.room?.code?.split('/').pop() ?? 'no room asigned'
 					}`,
 					true
 				);
@@ -100,6 +101,15 @@ class Schedule {
 			return embed;
 		});
 
+		if (!embeds.length)
+			embeds = [
+				new MessageEmbed()
+					.setColor('#4169E1')
+					.setTimestamp()
+					.setTitle(`Planing ${Campus[city]}`)
+					.setDescription(`${moment().format('MMMM Do YYYY')}\n\n**No activities today**`)
+			]
+		console.log(embeds)
 		embeds.forEach((e) => e.setFooter(`(${Date.now() - time}ms)`));
 		command.message.channel.send({ embeds });
 	}

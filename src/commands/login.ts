@@ -76,7 +76,7 @@ class Login {
 
 		axios.interceptors.request.use(
 			(config) => {
-				config.headers.cookie = `conect.sid=${process.env.ROSLYN_COOKIE ?? ''}`;
+				config.headers.cookie = process.env.ROSLYN_COOKIE;
 				return config;
 			},
 			(error) => {

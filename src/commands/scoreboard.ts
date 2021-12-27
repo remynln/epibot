@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { MessageEmbed } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 import {
 	Discord,
 	Guard,
@@ -10,6 +10,7 @@ import {
 } from 'discordx';
 import groupBy from 'lodash.groupby';
 import { Campus, CampusKey, Courses, CoursesKey, Data } from '../type.js';
+import { LogError } from './error.js';
 
 const InProcess: GuardFunction<SimpleCommandMessage> = async (
 	{ message },
@@ -17,13 +18,13 @@ const InProcess: GuardFunction<SimpleCommandMessage> = async (
 	next
 ) => {
 	if (!Scores.processing) {
-		message.react('👍');
 		await message.channel.sendTyping();
 		Scores.processing = true;
 		await next();
 		Scores.processing = false;
-		message.reactions.removeAll();
-	} else message.react('❗');
+	} else {
+		message.channel.send("Calm down, I'm processing...");
+	}
 };
 
 @Discord()
@@ -32,12 +33,13 @@ class Scores {
 	static cache: Data[] = [];
 
 	async getData(
+		msg: Message,
 		campus: CampusKey[] = Object.keys(Campus) as CampusKey[],
 		courses: CoursesKey[] = Object.keys(Courses) as CoursesKey[]
 	): Promise<Data[]> {
 		axios.interceptors.request.use(
 			(config) => {
-				config.headers.cookie = `conect.sid=${process.env.ROSLYN_COOKIE ?? ''}`;
+				config.headers.cookie = process.env.ROSLYN_COOKIE;
 				return config;
 			},
 			(error) => Promise.reject(error)
@@ -70,7 +72,7 @@ class Scores {
 							)
 						)
 					).map((_) => {
-						if (_.status !== 'fulfilled') return Promise.reject();
+						if (_.status !== 'fulfilled') return Promise.reject(_.reason);
 						let { city, course, total } = _.value;
 						if (total < 1) return Promise.resolve({ city, course, total });
 
@@ -87,7 +89,14 @@ class Scores {
 					})
 				)
 			)
-				.filter((_) => _ && _.status === 'fulfilled')
+				.map((_) => {
+					if (_.status !== 'fulfilled') {
+						LogError(msg, _.reason);
+						return null;
+					}
+					return _;
+				})
+				.filter((_) => _ != null)
 				// @ts-expect-error
 				.map(({ value }) => value)
 		);
@@ -118,7 +127,7 @@ class Scores {
 		const time = Date.now();
 		const msg = command.message;
 
-		let results = this.groupByCity(await this.getData());
+		let results = this.groupByCity(await this.getData(msg));
 
 		const embed = new MessageEmbed()
 			.setColor('#4169E1')
@@ -183,7 +192,7 @@ class Scores {
 
 		if (!city || !(city in Campus)) return command.sendUsageSyntax();
 
-		let results = await this.getData([city]);
+		let results = await this.getData(msg, [city]);
 
 		const embed = new MessageEmbed()
 			.setColor('#4169E1')
