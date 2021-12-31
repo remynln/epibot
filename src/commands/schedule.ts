@@ -72,7 +72,7 @@ class Schedule {
 					)}&end=${end.format('YYYY-M-D')}`
 				)
 				.catch((err) => LogError(command.message, err))
-				.then((res) => res.data)) as Activity[]
+				.then((res) => (Array.isArray(res.data) ? res.data : []))) as Activity[]
 		)
 			.filter(({ semester }) => semester < 7)
 			.sort((a, b) => moment(a.start).diff(b.start));
@@ -92,7 +92,8 @@ class Schedule {
 					`[${moment(data.start).format('HH:mm')} - ${moment(data.end).format(
 						'HH:mm'
 					)}]`,
-					`${data.titlemodule} » ${data.acti_title} — ${data.room?.code?.split('/').pop() ?? 'no room asigned'
+					`${data.titlemodule} » ${data.acti_title} — ${
+						data.room?.code?.split('/').pop() ?? 'no room asigned'
 					}`,
 					true
 				);
@@ -107,9 +108,11 @@ class Schedule {
 					.setColor('#4169E1')
 					.setTimestamp()
 					.setTitle(`Planing ${Campus[city]}`)
-					.setDescription(`${moment().format('MMMM Do YYYY')}\n\n**No activities today**`)
-			]
-		console.log(embeds)
+					.setDescription(
+						`${moment().format('MMMM Do YYYY')}\n\n**No activities today**`
+					)
+			];
+		console.log(embeds);
 		embeds.forEach((e) => e.setFooter(`(${Date.now() - time}ms)`));
 		command.message.channel.send({ embeds });
 	}
