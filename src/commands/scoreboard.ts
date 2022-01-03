@@ -23,7 +23,8 @@ const InProcess: GuardFunction<SimpleCommandMessage> = async (
 		await next();
 		Scores.processing = false;
 	} else {
-		message.channel.send("Calm down, I'm processing...");
+		await message.channel.send("Calm down, I'm processing...");
+		await message.channel.sendTyping();
 	}
 };
 
