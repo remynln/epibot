@@ -4,3 +4,4 @@ services:
   epibot:
     build: .
     restart: always
+    env_file: '.env'
