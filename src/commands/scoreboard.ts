@@ -125,7 +125,6 @@ class Scores {
 	})
 	@Guard(InProcess)
 	async board(command: SimpleCommandMessage) {
-		const time = Date.now();
 		const msg = command.message;
 
 		let results = this.groupByCity(await this.getData(msg));
@@ -160,7 +159,7 @@ class Scores {
 				);
 			});
 
-		embed.setFooter(`(${Date.now() - time}ms)`);
+		embed.setFooter(`(${msg.createdTimestamp - Date.now()}ms)`);
 		command.message.channel.send({ embeds: [embed] });
 	}
 
@@ -173,7 +172,6 @@ class Scores {
 		city: CampusKey | undefined,
 		command: SimpleCommandMessage
 	) {
-		const time = Date.now();
 		const msg = command.message;
 
 		if (!city)
@@ -219,7 +217,7 @@ class Scores {
 			}
 		});
 
-		embed.setFooter(`(${Date.now() - time}ms)`);
+		embed.setFooter(`(${msg.createdTimestamp - Date.now()}ms)`);
 		command.message.channel.send({ embeds: [embed] });
 	}
 }

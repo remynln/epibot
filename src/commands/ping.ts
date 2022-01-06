@@ -7,11 +7,11 @@ class Miscs {
 	async ping(command: SimpleCommandMessage) {
 		await command.message.channel.sendTyping();
 
-		const time = Date.now();
+		const time = command.message.createdTimestamp;
 		const embed = new MessageEmbed()
 			.setTitle(`🏓 Pong`)
 			.setImage('https://media.giphy.com/media/xThuWtNFKZWG6fUFe8/giphy.gif')
-			.setDescription(`${Date.now() - time} ms`);
+			.setDescription(`${command.message.createdTimestamp - Date.now()} ms`);
 		command.message.channel.send({ embeds: [embed] });
 	}
 

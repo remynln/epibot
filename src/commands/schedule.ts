@@ -28,7 +28,6 @@ class Schedule {
 		end: string | moment.Moment | undefined,
 		command: SimpleCommandMessage
 	) {
-		const time = Date.now();
 		await command.message.channel.sendTyping();
 
 		if (!city)
@@ -92,8 +91,7 @@ class Schedule {
 					`[${moment(data.start).format('HH:mm')} - ${moment(data.end).format(
 						'HH:mm'
 					)}]`,
-					`${data.titlemodule} » ${data.acti_title} — ${
-						data.room?.code?.split('/').pop() ?? 'no room asigned'
+					`${data.titlemodule} » ${data.acti_title} — ${data.room?.code?.split('/').pop() ?? 'no room asigned'
 					}`,
 					true
 				);
@@ -113,7 +111,7 @@ class Schedule {
 					)
 			];
 		console.log(embeds);
-		embeds.forEach((e) => e.setFooter(`(${Date.now() - time}ms)`));
+		embeds.forEach((e) => e.setFooter(`(${command.message.createdTimestamp - Date.now()}ms)`));
 		command.message.channel.send({ embeds });
 	}
 }
