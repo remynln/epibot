@@ -11,6 +11,7 @@ import {
 import groupBy from 'lodash.groupby';
 import { Campus, CampusKey, Courses, CoursesKey, Data } from '../type.js';
 import { LogError } from './error.js';
+import { processTime } from './ping.js';
 
 const InProcess: GuardFunction<SimpleCommandMessage> = async (
 	{ message },
@@ -159,7 +160,7 @@ class Scores {
 				);
 			});
 
-		embed.setFooter(`(${msg.createdTimestamp - Date.now()}ms)`);
+		embed.setFooter(`(${processTime(msg)}ms)`);
 		command.message.channel.send({ embeds: [embed] });
 	}
 
@@ -217,7 +218,7 @@ class Scores {
 			}
 		});
 
-		embed.setFooter(`(${msg.createdTimestamp - Date.now()}ms)`);
+		embed.setFooter(`(${processTime(msg)}ms)`);
 		command.message.channel.send({ embeds: [embed] });
 	}
 }

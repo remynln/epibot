@@ -1,17 +1,23 @@
 import { MessageEmbed } from 'discord.js';
 import { Discord, SimpleCommand, SimpleCommandMessage } from 'discordx';
 
+import { Message } from "discord.js";
+import moment from "moment";
+
+export const processTime = (msg: Message) => Math.abs(
+	moment().diff(msg.createdTimestamp)
+)
+
 @Discord()
 class Miscs {
 	@SimpleCommand('ping')
 	async ping(command: SimpleCommandMessage) {
 		await command.message.channel.sendTyping();
 
-		const time = command.message.createdTimestamp;
 		const embed = new MessageEmbed()
 			.setTitle(`🏓 Pong`)
 			.setImage('https://media.giphy.com/media/xThuWtNFKZWG6fUFe8/giphy.gif')
-			.setDescription(`${command.message.createdTimestamp - Date.now()} ms`);
+			.setDescription(`${processTime(command.message)} ms`);
 		command.message.channel.send({ embeds: [embed] });
 	}
 

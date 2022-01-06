@@ -10,6 +10,7 @@ import groupBy from 'lodash.groupby';
 import moment from 'moment';
 import { Activity, Campus, CampusKey } from '../type.js';
 import { LogError } from './error.js';
+import { processTime } from './ping.js';
 
 const allowedFormat = ['D', 'D-M', 'D/M', 'D-M-YYYY', 'D/M/YYYY'];
 
@@ -111,7 +112,7 @@ class Schedule {
 					)
 			];
 		console.log(embeds);
-		embeds.forEach((e) => e.setFooter(`(${command.message.createdTimestamp - Date.now()}ms)`));
+		embeds.forEach((e) => e.setFooter(`(${processTime(command.message)}ms)`));
 		command.message.channel.send({ embeds });
 	}
 }
