@@ -89,9 +89,7 @@ class Schedule {
 
 			data.forEach((data) => {
 				embed.addField(
-					`[${moment(data.start).format('HH:mm')} - ${moment(data.end).format(
-						'HH:mm'
-					)}]`,
+					`[<t:${moment(data.start).unix()}:t> - <t:${moment(data.end).unix()}:t>]`,
 					`${data.titlemodule} » ${data.acti_title} — ${data.room?.code?.split('/').pop() ?? 'no room asigned'
 					}`,
 					true
