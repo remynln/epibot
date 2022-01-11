@@ -7,7 +7,7 @@ import {
 	SimpleCommandOption
 } from 'discordx';
 import groupBy from 'lodash.groupby';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Activity, Campus, CampusKey } from '../type.js';
 import { LogError } from './error.js';
 import { processTime } from './ping.js';
@@ -89,7 +89,7 @@ class Schedule {
 
 			data.forEach((data) => {
 				embed.addField(
-					`[<t:${moment(data.start).unix()}:t> - <t:${moment(data.end).unix()}:t>]`,
+					`[<t:${moment.tz(data.start, 'Europe/Paris').unix()}:t> - <t:${moment.tz(data.end, 'Europe/Paris').unix()}:t>]`,
 					`${data.titlemodule} » ${data.acti_title} — ${data.room?.code?.split('/').pop() ?? 'no room asigned'
 					}`,
 					true
