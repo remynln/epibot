@@ -5,7 +5,7 @@ export function LogError(msg: Message, error: any): any {
 		return error;
 	if (error?.response.status >= 400 && error?.response.status < 500) {
 		msg.channel.send(
-			`***${error?.response.status}**: ${error?.response.statusText}*\nPlease update the token for ${error?.response.request.host}`
+			`***${error?.response.status}**: ${error?.response.statusText}*\n<@293780268517687296>Please update the token for ${error?.response.request.host}`
 		);
 		throw error;
 	} else {
