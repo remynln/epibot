@@ -24,6 +24,9 @@
     "ts-node": "^10.8.0",
     "typescript": "^4.7.2"
   },
+  "dependencies": {
+    "discord.js": "^13.7.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Waz0x/epibot.git"
