@@ -1,0 +1,22 @@
+{
+  "name": "epibot",
+  "version": "2.0.0",
+  "description": "a bot for etipech chanel. Used for login and other miscellaneous things.",
+  "main": "build",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Waz0x/epibot.git"
+  },
+  "contributors": [
+    "Waz0x",
+    "YunnXairou"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Waz0x/epibot/issues"
+  },
+  "homepage": "https://github.com/Waz0x/epibot#readme"
+}
