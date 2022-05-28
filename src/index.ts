@@ -5,7 +5,10 @@ import interactionCreate from './listeners/interactionCreate'
 console.log('Bot is starting...')
 
 const client = new Client({
-  intents: Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS
+  intents:
+    Intents.FLAGS.GUILDS &
+    Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS &
+    Intents.FLAGS.GUILD_MEMBERS
 })
 
 ready(client)
