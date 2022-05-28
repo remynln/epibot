@@ -10,10 +10,15 @@ export interface Command extends ChatInputApplicationCommandData {
   run: (client: Client, interaction: BaseCommandInteraction) => void
 }
 
-export const processTime = (date: Date) =>
-  Math.abs(
-    DateTime.fromISO(date.toISOString()).diff(DateTime.now()).milliseconds
-  )
+export function processTime(date: Date) {
+  const diff = DateTime.now().diff(DateTime.fromISO(date.toISOString()), [
+    'seconds',
+    'milliseconds'
+  ])
+
+  if (diff.seconds >= 1) return `${diff.seconds}.${diff.milliseconds} s`
+  return `${diff.milliseconds} ms`
+}
 
 export const campusOptions: ApplicationCommandChoicesData = {
   name: 'campus',

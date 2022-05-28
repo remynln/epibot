@@ -66,7 +66,7 @@ export const Score: Command = {
     }
 
     await interaction.followUp({
-      embeds: [embed.setFooter(`(${processTime(interaction.createdAt)} ms)`)]
+      embeds: [embed.setFooter(`(${processTime(interaction.createdAt)})`)]
     })
   }
 }

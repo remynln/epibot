@@ -14,7 +14,7 @@ export const Ping: Command = {
           .setImage(
             'https://media.giphy.com/media/xThuWtNFKZWG6fUFe8/giphy.gif'
           )
-          .setDescription(`${processTime(interaction.createdAt)} ms`)
+          .setDescription(`${processTime(interaction.createdAt)}`)
       ]
     })
   }
