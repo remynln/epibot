@@ -10,6 +10,14 @@ declare type Data = {
 
 class Campus {
   private static cache: Data[] = []
+  private static _error: Response | undefined = undefined
+
+  static get error() {
+    return this._error
+  }
+  private static set error(value) {
+    this._error = value
+  }
 
   static getRaw(campus?: string[]) {
     return this.getData(campus)
@@ -49,6 +57,7 @@ class Campus {
       await Promise.allSettled(promises).then((results) => {
         for (const res of results) {
           if (res.status === 'fulfilled') this.cache.push(res.value)
+          else this.error = res.reason.response
         }
       })
     }
