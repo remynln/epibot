@@ -25,6 +25,8 @@ export const Pong: Command = {
   description: '...',
   type: 'CHAT_INPUT',
   run: async (client: Client, interaction: BaseCommandInteraction) => {
+    if (!interaction.guild?.emojis) await interaction.guild?.fetch()
+
     const cache = interaction.guild?.emojis?.cache
     const random = Math.floor(Math.random() * (cache?.size ?? 0))
     const content = cache?.at(random)?.toString() ?? 'bruh'
