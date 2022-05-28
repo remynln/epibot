@@ -1,10 +1,4 @@
-import {
-  ApplicationCommandOptionChoiceData,
-  BaseCommandInteraction,
-  Client,
-  GuildMemberRoleManager,
-  MessageEmbed
-} from 'discord.js'
+import { BaseCommandInteraction, Client, MessageEmbed } from 'discord.js'
 import { campusOptions, Command, processTime } from '../utils'
 import Campus from '../CampusCache'
 
@@ -12,6 +6,7 @@ export const ScoreBoard: Command = {
   name: 'scoreboard',
   description: '...',
   type: 'CHAT_INPUT',
+  defaultPermission: false,
   run: async (client: Client, interaction: BaseCommandInteraction) => {
     const data = await Campus.getGroup()
     const embed = new MessageEmbed()
