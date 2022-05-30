@@ -22,8 +22,8 @@ export function processTime(date: Date) {
     'milliseconds'
   ])
 
-  if (diff.seconds >= 1) return `${diff.seconds}.${diff.milliseconds} s`
-  return `${diff.milliseconds} ms`
+  if (diff.seconds != 0) return `${diff.seconds}.${diff.milliseconds} s`
+  return `${Math.abs(diff.milliseconds)} ms`
 }
 
 export const campusOptions: ApplicationCommandChoicesData = {

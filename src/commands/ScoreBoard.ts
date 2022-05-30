@@ -14,7 +14,7 @@ export const ScoreBoard: Command = {
       .setTimestamp()
       .setTitle('Scoreboard')
 
-    if (Campus.error) {
+    if (Campus.error && Campus.error.status < 500) {
       embed.setColor('#E16941')
       embed.setDescription(`${Campus.error.status} ${Campus.error.statusText}`)
     } else
@@ -28,20 +28,20 @@ export const ScoreBoard: Command = {
           )
 
           return {
-            city,
+            cityName,
             percentage: ((role?.members.size ?? 0) / total) * 100
           }
         })
         .filter(({ percentage }) => percentage)
         .sort((a, b) => b.percentage - a.percentage)
-        .forEach(({ city, percentage }) => {
+        .forEach(({ cityName, percentage }) => {
           let ascii_per = ''
           for (let n = 0; n < 10; n++)
             if (percentage / 10 > n) ascii_per = ascii_per + '='
           for (let n = ascii_per.length; n < 10; n++)
             ascii_per = ascii_per + '-'
           embed.addField(
-            `${city}`,
+            `${cityName}`,
             `\`[${ascii_per}]\`, ${percentage.toFixed(2)}%`,
             true
           )

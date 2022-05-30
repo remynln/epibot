@@ -14,6 +14,8 @@ const handleSlashCommand = async (
   interaction: BaseCommandInteraction
 ): Promise<void> => {
   if (!interaction.guild?.name) await interaction.guild?.fetch()
+  if (interaction.guild?.members.cache.size != interaction.guild?.memberCount)
+    await interaction.guild?.members.fetch()
 
   const slashCommand = Commands.find((c) => c.name === interaction.commandName)
   if (!slashCommand) {
@@ -21,11 +23,12 @@ const handleSlashCommand = async (
     return
   }
 
-  await interaction.deferReply()
+  await interaction.deferReply({
+    ephemeral: !!slashCommand.ephemeral
+  })
 
   const response = await slashCommand.run(client, interaction)
   await interaction.followUp({
-    ephemeral: !!slashCommand.ephemeral,
     ...response
   })
 }

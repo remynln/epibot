@@ -21,6 +21,8 @@ const handleCommand = async (
   message: Message
 ): Promise<void> => {
   if (!message.guild?.name) await message.guild?.fetch()
+  if (message.guild?.members.cache.size != message.guild?.memberCount)
+    await message.guild?.members.fetch()
 
   const args = message.content.slice(prefix.length).trim().split(/ +/g)
   const command = args.shift()?.toLowerCase()
