@@ -1,10 +1,11 @@
 import axios from 'axios'
 import groupBy from 'lodash.groupby'
+import { DateTime } from 'luxon'
 import { campusOptions } from './utils'
 
 declare type Data = {
   city: string
-  // course: string
+  promo: number
   total: number
 }
 
@@ -43,21 +44,45 @@ class Campus {
     if (!campus)
       campus = campusOptions.choices?.map(({ value }) => value as string)
 
-    const promises = campus
-      ?.filter((campus) => !this.cache.find(({ city }) => city === campus))
-      .map((city) =>
-        axios
-          .get(
-            `https://roslyn.epi.codes/trombi/api.php?action=search&q=&filter[city]=${city}`
-          )
-          .then(({ data: { count } }) => ({ city, total: count }))
+    const promises = []
+    for (let i = 1; i <= 5; i++) {
+      const promo = DateTime.now().plus({ year: 5 - i }).year
+      promises.push(
+        campus
+          ?.filter((campus) => !this.cache.find(({ city }) => city === campus))
+          .map((city) => [
+            axios
+              .get(
+                `https://roslyn.epi.codes/trombi/api.php?action=search&q=&filter[city]=${city}&filter[promo]=${promo}`
+              )
+              .then(({ data: { count } }) => {
+                return { city, promo, total: count }
+              }),
+            axios
+              .get(
+                `https://roslyn.epi.codes/trombi/api.php?action=search&q=&filter[course]=master%2Fclassic&filter[city]=${city}&filter[promo]=${promo}`
+              )
+              .then(({ data: { count } }) => {
+                return { city, promo, total: -count }
+              }),
+            axios
+              .get(
+                `https://roslyn.epi.codes/trombi/api.php?action=search&q=&filter[course]=master%2Fclassic&filter[city]=${city}&filter[promo]=${promo}`
+              )
+              .then(({ data: { count } }) => {
+                return { city, promo, total: -count }
+              })
+          ])
+          .flat()
       )
+    }
 
     if (promises?.length) {
-      await Promise.allSettled(promises).then((results) => {
+      await Promise.allSettled(promises.flat()).then((results) => {
         for (const res of results) {
-          if (res.status === 'fulfilled') this.cache.push(res.value)
-          else this.error = res.reason.response
+          if (res.status === 'fulfilled') {
+            if (res.value) this.cache.push(res.value)
+          } else this.error = res.reason.response
         }
       })
     }

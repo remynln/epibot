@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { DateTime } from 'luxon'
-import { loged_role, log_chanel, prefix } from '../config'
 import { Command, Profile } from '../utils'
+import { loged_role, log_chanel, prefix } from '../config'
 import {
   BaseCommandInteraction,
   GuildMember,
