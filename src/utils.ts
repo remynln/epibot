@@ -6,7 +6,7 @@ import type {
   Message,
   MessageOptions
 } from 'discord.js'
-import { DateTime } from 'luxon'
+import { DateTime, StringUnitLength } from 'luxon'
 
 export interface Command extends ChatInputApplicationCommandData {
   ephemeral?: boolean
@@ -96,4 +96,25 @@ export const campusOptions: ApplicationCommandChoicesData = {
       value: 'BJ/COT'
     }
   ]
+}
+
+interface detail {
+  id: string
+  name: string
+  count: number
+}
+export interface Profile {
+  id: string
+  aliases: string[]
+  name: string
+  picture: string
+  course: detail
+  promo: detail
+  city: detail
+  groups: ({
+    path: string
+    depth: number
+  } & detail)[]
+  semester: detail
+  out: boolean
 }
