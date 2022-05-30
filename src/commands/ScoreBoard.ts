@@ -1,4 +1,4 @@
-import { BaseCommandInteraction, Client, MessageEmbed } from 'discord.js'
+import { MessageEmbed } from 'discord.js'
 import { campusOptions, Command, processTime } from '../utils'
 import Campus from '../CampusCache'
 
@@ -7,7 +7,7 @@ export const ScoreBoard: Command = {
   description: '...',
   type: 'CHAT_INPUT',
   defaultPermission: false,
-  run: async (client: Client, interaction: BaseCommandInteraction) => {
+  run: async (client, interaction) => {
     const data = await Campus.getGroup()
     const embed = new MessageEmbed()
       .setColor('#4169E1')
@@ -47,8 +47,8 @@ export const ScoreBoard: Command = {
           )
         })
 
-    await interaction.followUp({
+    return {
       embeds: [embed.setFooter(`(${processTime(interaction.createdAt)})`)]
-    })
+    }
   }
 }

@@ -23,5 +23,9 @@ const handleSlashCommand = async (
 
   await interaction.deferReply()
 
-  slashCommand.run(client, interaction)
+  const response = await slashCommand.run(client, interaction)
+  await interaction.followUp({
+    ephemeral: !!slashCommand.ephemeral,
+    ...response
+  })
 }

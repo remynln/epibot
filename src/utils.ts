@@ -2,12 +2,18 @@ import type {
   ChatInputApplicationCommandData,
   Client,
   BaseCommandInteraction,
-  ApplicationCommandChoicesData
+  ApplicationCommandChoicesData,
+  Message,
+  MessageOptions
 } from 'discord.js'
 import { DateTime } from 'luxon'
 
 export interface Command extends ChatInputApplicationCommandData {
-  run: (client: Client, interaction: BaseCommandInteraction) => void
+  ephemeral?: boolean
+  run: (
+    client: Client,
+    interaction: BaseCommandInteraction | Message
+  ) => Promise<Omit<MessageOptions, 'reply' | 'stickers' | 'flags'>>
 }
 
 export function processTime(date: Date) {

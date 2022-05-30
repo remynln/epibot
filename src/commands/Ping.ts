@@ -1,13 +1,13 @@
-import { BaseCommandInteraction, Client, MessageEmbed } from 'discord.js'
+import { MessageEmbed } from 'discord.js'
 import { Command, processTime } from '../utils'
 
 export const Ping: Command = {
   name: 'ping',
   description: '...',
   type: 'CHAT_INPUT',
-  run: async (client: Client, interaction: BaseCommandInteraction) => {
-    await interaction.followUp({
-      ephemeral: true,
+  ephemeral: true,
+  run: async (client, interaction) => {
+    return {
       embeds: [
         new MessageEmbed()
           .setTitle(`🏓 Pong`)
@@ -16,7 +16,7 @@ export const Ping: Command = {
           )
           .setDescription(`${processTime(interaction.createdAt)}`)
       ]
-    })
+    }
   }
 }
 
@@ -24,13 +24,11 @@ export const Pong: Command = {
   name: 'pong',
   description: '...',
   type: 'CHAT_INPUT',
-  run: async (client: Client, interaction: BaseCommandInteraction) => {
+  ephemeral: true,
+  run: async (client, interaction) => {
     const cache = interaction.guild?.emojis?.cache
     const random = Math.floor(Math.random() * (cache?.size ?? 0))
 
-    await interaction.followUp({
-      ephemeral: true,
-      content: cache?.at(random)?.toString() ?? 'bruh'
-    })
+    return { content: cache?.at(random)?.toString() ?? 'bruh' }
   }
 }

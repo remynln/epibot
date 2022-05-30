@@ -1,7 +1,6 @@
 import {
   ApplicationCommandOptionChoiceData,
   BaseCommandInteraction,
-  Client,
   GuildMemberRoleManager,
   MessageEmbed
 } from 'discord.js'
@@ -13,7 +12,10 @@ export const Score: Command = {
   description: 'display detail for city score',
   type: 'CHAT_INPUT',
   options: [campusOptions],
-  run: async (client: Client, interaction: BaseCommandInteraction) => {
+  run: async (client, interaction) => {
+    if (!(interaction instanceof BaseCommandInteraction))
+      return { content: 'Please use /score command instead.' }
+
     const campusOption = interaction.options.get('campus')?.value
     let campus: ApplicationCommandOptionChoiceData | undefined
 
@@ -31,7 +33,8 @@ export const Score: Command = {
       })
     }
 
-    if (!campus || typeof campus?.value !== 'string') return
+    if (!campus || typeof campus?.value !== 'string')
+      return { content: 'An error has occured when searching for this campus.' }
 
     const data = await Campus.getGroup([campus.value])
     const embed = new MessageEmbed()
@@ -39,9 +42,8 @@ export const Score: Command = {
       .setTimestamp()
       .setTitle(campus?.name)
 
-    console.log(Campus.error)
-
     if (Campus.error) {
+      console.log(Campus.error)
       embed.setColor('#E16941')
       embed.setDescription(`${Campus.error.status} ${Campus.error.statusText}`)
     } else
@@ -72,8 +74,8 @@ export const Score: Command = {
         }
       }
 
-    await interaction.followUp({
+    return {
       embeds: [embed.setFooter(`(${processTime(interaction.createdAt)})`)]
-    })
+    }
   }
 }
