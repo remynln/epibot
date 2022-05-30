@@ -3,9 +3,8 @@ import { Command, processTime } from '../utils'
 
 export const Ping: Command = {
   name: 'ping',
-  description: '...',
-  type: 'CHAT_INPUT',
   ephemeral: true,
+  description: '...',
   run: async (client, interaction) => {
     return {
       embeds: [
@@ -22,9 +21,8 @@ export const Ping: Command = {
 
 export const Pong: Command = {
   name: 'pong',
-  description: '...',
-  type: 'CHAT_INPUT',
   ephemeral: true,
+  description: '...',
   run: async (client, interaction) => {
     const cache = interaction.guild?.emojis?.cache
     const random = Math.floor(Math.random() * (cache?.size ?? 0))

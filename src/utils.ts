@@ -6,7 +6,7 @@ import type {
   Message,
   MessageOptions
 } from 'discord.js'
-import { DateTime, StringUnitLength } from 'luxon'
+import { DateTime } from 'luxon'
 
 export interface Command extends ChatInputApplicationCommandData {
   ephemeral?: boolean

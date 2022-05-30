@@ -1,5 +1,6 @@
 import type { Client, Message } from 'discord.js'
 import { Commands } from '../commands'
+import { login_chanel } from '../config'
 
 export const prefix = '!'
 
@@ -7,7 +8,7 @@ export default (client: Client): void => {
   client.on('messageCreate', async (message: Message) => {
     if (message.author.bot) return
     if (message.content.indexOf(prefix) !== 0)
-      if (message.channel.id === '799971495618543621')
+      if (message.channel.id === login_chanel)
         message.content = `${prefix}login ${message.content}`
       else return
 

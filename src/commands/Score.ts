@@ -10,7 +10,6 @@ import Campus from '../CampusCache'
 export const Score: Command = {
   name: 'score',
   description: 'display detail for city score',
-  type: 'CHAT_INPUT',
   options: [campusOptions],
   run: async (client, interaction) => {
     if (!(interaction instanceof BaseCommandInteraction))

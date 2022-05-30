@@ -3,11 +3,11 @@ import axios from 'axios'
 import ready from './listeners/ready'
 import message from './listeners/message'
 import interactionCreate from './listeners/interactionCreate'
+import { cookie, token } from './config'
 
 console.log('Bot is starting...')
 
 const client = new Client({
-  restSweepInterval: 1000,
   partials: ['USER', 'CHANNEL', 'GUILD_MEMBER', 'MESSAGE', 'REACTION'],
   intents: [
     'DIRECT_MESSAGES',
@@ -24,4 +24,14 @@ ready(client)
 message(client)
 interactionCreate(client)
 
-client.login(process.env.BOT_TOKEN)
+client.login(token)
+
+axios.interceptors.request.use(
+  (config) => {
+    if (!config) config = {}
+    if (!config.headers) config.headers = {}
+    config.headers.cookie = cookie
+    return config
+  },
+  (error) => Promise.reject(error)
+)

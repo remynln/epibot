@@ -1,0 +1,6 @@
+export const prefix = '!'
+export const token = process.env['BOT_TOKEN'] ?? ''
+export const cookie = process.env['ROSLYN_COOKIE'] ?? ''
+export const login_chanel = '799971495618543621'
+export const log_chanel = '799971495618543622'
+export const loged_role = '980815175403831326'

@@ -1,4 +1,7 @@
 import axios from 'axios'
+import { DateTime } from 'luxon'
+import { loged_role, log_chanel, prefix } from '../config'
+import { Command, Profile } from '../utils'
 import {
   BaseCommandInteraction,
   GuildMember,
@@ -7,12 +10,10 @@ import {
   MessageEmbed,
   User
 } from 'discord.js'
-import { DateTime } from 'luxon'
-import { prefix } from '../listeners/message'
-import { Command, Profile } from '../utils'
 
 export const Login: Command = {
   name: 'login',
+  ephemeral: true,
   description: 'give you the roles you deserve',
   options: [
     {
@@ -22,11 +23,10 @@ export const Login: Command = {
       type: 'STRING'
     }
   ],
-  ephemeral: true,
   run: async (client, interaction) => {
     if (
       interaction.member?.roles instanceof GuildMemberRoleManager &&
-      interaction.member?.roles.cache.find(({ name }) => name === 'Verified')
+      interaction.member?.roles.cache.get(loged_role)
     )
       return { content: 'You have already been verrified.' }
 
@@ -64,6 +64,7 @@ const handleRoles = async (
 
   const campus = profile.city.name
   const promo = parseInt(profile.promo.name, 10)
+  const verifiedRole = interaction.guild?.roles.cache.get(loged_role)
 
   promoRole = interaction.guild?.roles.cache.find(
     ({ name }) => name === `${promo}`
@@ -86,10 +87,6 @@ const handleRoles = async (
       })
   }
 
-  const verifiedRole = interaction.guild?.roles.cache.find(
-    ({ name }) => name === `${promo}`
-  )
-
   if (interaction.member instanceof GuildMember) {
     if (cityRole) interaction.member?.roles.add(cityRole)
     if (promoRole) interaction.member?.roles.add(promoRole)
@@ -97,7 +94,7 @@ const handleRoles = async (
   }
 
   const author = interaction.member?.user
-  const channel = await interaction.guild?.channels.fetch('799971495618543622')
+  const channel = await interaction.guild?.channels.fetch(log_chanel)
 
   if (channel?.type == 'GUILD_TEXT' && author instanceof User)
     channel.send({
