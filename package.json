@@ -4,8 +4,8 @@
   "description": "a bot for etipech chanel. Used for login and other miscellaneous things.",
   "main": "dist",
   "scripts": {
+    "start": "node dist/index.js",
     "postinstall": "tsc",
-    "start": "node dist",
     "dev": "ts-node src",
     "lint": "prettier --ignore-path .gitignore --check src & eslint --ignore-path .gitignore src",
     "format": "prettier --ignore-path .gitignore --write src"
