@@ -61,28 +61,25 @@ const handleRoles = async (
   profile: Profile
 ) => {
   let promoRole, cityRole
-
-  const campus = profile.city.name
-  const promo = parseInt(profile.promo.name, 10)
   const verifiedRole = interaction.guild?.roles.cache.get(loged_role)
 
   promoRole = interaction.guild?.roles.cache.find(
-    ({ name }) => name === `${promo}`
+    ({ name }) => name === profile.promo.name
   )
   if (!promoRole)
     promoRole = await interaction.guild?.roles.create({
       hoist: true,
-      name: `${promo}`,
+      name: profile.promo.name,
       reason: 'new promo'
     })
 
-  if (promo > DateTime.now().plus({ year: 2 }).year) {
+  if (profile.course.name !== 'master') {
     cityRole = interaction.guild?.roles.cache.find(
-      ({ name }) => name === campus
+      ({ name }) => name === profile.city.name
     )
     if (!cityRole)
       cityRole = await interaction.guild?.roles.create({
-        name: campus,
+        name: profile.city.name,
         reason: 'new campus'
       })
   }
@@ -105,7 +102,11 @@ const handleRoles = async (
           .setThumbnail(author?.avatarURL() ?? '')
           .setTitle(`${author?.username} | ${profile.name}`)
           .setDescription(profile.id)
-          .addField('Grades:', `${promo} | ${campus}`, true)
+          .addField(
+            'Grades:',
+            `${profile.promo.name} | ${profile.city.name}`,
+            true
+          )
       ]
     })
 }
