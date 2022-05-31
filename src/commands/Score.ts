@@ -41,7 +41,7 @@ export const Score: Command = {
       .setTimestamp()
       .setTitle(campus?.name)
 
-    if (Campus.error) {
+    if (Campus.error && Campus.error.status < 500) {
       console.log(Campus.error)
       embed.setColor('#E16941')
       embed.setDescription(`${Campus.error.status} ${Campus.error.statusText}`)
